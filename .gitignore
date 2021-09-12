@@ -3,3 +3,4 @@ data/
 *.mp
 *.cc
 .vscode/
+testing.jl

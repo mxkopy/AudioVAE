@@ -57,8 +57,6 @@ end
 
 function eval_model( encoder, decoder, reconstruct, mean, std, param, data)
 
-    # x = ( data .+ 1.0 ) ./ 2.0
-
     # Encoding process
     enc_out    = encoder( data )
 
@@ -170,15 +168,15 @@ end
 
 function autoencode( num_batches )
 
-    init()
-
     encoder, decoder, reconstruct, mean, std = deserialize( savename )
 
     out = zeros( sample_size, 1, 2, num_batches )
 
+    io  = open( data_file )
+
     for i in 1 : num_batches 
 
-        data = next()
+        data = next( io )
 
         unit_gaussians = ones( latent_vec_size )
 
@@ -194,9 +192,9 @@ function autoencode( num_batches )
 
     wavwrite(file, string(out_directory, "output.wav"), Fs=AudioIterator.fs)
 
-end
+    close( io )
 
-train_model( create_model() )
+end
 
 export parameters, create_model, train_model, load_model, encoder, decoder, eval_model, autoencode
 
