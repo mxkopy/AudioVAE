@@ -59,7 +59,7 @@ function write_songs()
 
         open( data_file, "a" ) do io
 
-            written = load_file( string( wav_directory, path ) )
+            written, _ = load_file( string( wav_directory, path ) )
 
             for i in 1:size( written )[4]
 
