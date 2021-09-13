@@ -69,7 +69,7 @@ function write_songs()
 
         open( data_file, "a" ) do io
 
-            written, fs = wavread( string(wav_directory, path) )
+            written, sr, _, _ = wavread( string(wav_directory, path) )
 
             for i in 1:size( written )[4]
 
@@ -101,7 +101,6 @@ function next( io )
     end
 
 end
-
 
 write_songs()
 
