@@ -47,7 +47,7 @@ function reshape_file( curr_file )
 
     last_sample_index = ( reduce( *, newsize ) - reduce(*, newsize[1:3]) ) // 2
 
-    runoff      = replace_runoff( file[ last_sample_index:end, : ] )
+    runoff      = replace_runoff( curr_file[ last_sample_index:end, : ] )
 
     _curr_file  = cat( file, runoff, dims=1 )
 
