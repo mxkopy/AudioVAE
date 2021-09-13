@@ -45,7 +45,7 @@ function reshape_file( curr_file )
     num_samples = Int( floor( size( curr_file )[1] / ( sample_size * batches )))
     newsize     = ( sample_size, 2, batches, num_samples )
 
-    last_sample_index = ( reduce( *, newsize ) - reduce(*, newsize[1:3]) ) // 2
+    last_sample_index = Int(floor( reduce( *, newsize ) - reduce(*, newsize[1:3]) ) // 2 )
 
     runoff      = replace_runoff( curr_file[ last_sample_index:end, : ] )
 
