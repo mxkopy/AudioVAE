@@ -65,15 +65,17 @@ end
 
 function write_songs()
 
-    open( data_file, "w" ) do io
-
         for path in readdir( wav_directory )
 
-            written = load_next( path )[1]
+            open( data_file, "a" ) do io
 
-            for i in 1:size( written )[4]
+                written, fs = wavread( string(wav_directory, path) )
 
-                serialize( io, reshape( written[:, :, :, i], ( sample_size, 1, 2, batches ) ) )
+                for i in 1:size( written )[4]
+
+                    serialize( io, reshape( written[:, :, :, i], ( sample_size, 1, 2, batches ) ) )
+
+                end
 
             end
 
@@ -82,7 +84,6 @@ function write_songs()
     end
 
 end
-
 
 
 # Returns an array of Float16 of size (sample_size, channels, 1, batch_size)

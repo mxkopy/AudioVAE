@@ -1,5 +1,3 @@
-# using Plots
-
 const batches       = 4
 const sample_size   = 4096 * 2
 const out_channels  = 8
