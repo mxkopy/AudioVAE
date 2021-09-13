@@ -53,23 +53,13 @@ function reshape_file( curr_file )
 
 end
 
-# Loads the next file in directory_iterator
-
-function load_next( dir )
-
-    curr_file    = load_file(string( wav_directory, dir ))
-
-    return curr_file
-
-end
-
 function write_songs()
 
     for path in readdir( wav_directory )
 
         open( data_file, "a" ) do io
 
-            written, sr, _, _ = wavread( string(wav_directory, path) )
+            written = load_file( string( wav_directory, path ) )
 
             for i in 1:size( written )[4]
 
