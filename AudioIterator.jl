@@ -18,8 +18,6 @@ using FileIO, WAV, Serialization
 
 function load_file( dir )
 
-
-
     curr_file, fs = wavread( dir )
 
     curr_file     = reshape_file( curr_file )
@@ -49,8 +47,6 @@ function reshape_file( curr_file )
 
     last_sample_index = ( reduce( *, newsize ) - reduce(*, newsize[1:3]) ) // 2
 
-    file        = curr_file[ 1 : last_sample_index, : ]
-
     runoff      = replace_runoff( file[ last_sample_index:end, : ] )
 
     _curr_file  = cat( file, runoff, dims=1 )
@@ -66,9 +62,9 @@ function write_songs()
 
     for path in readdir( wav_directory )
 
-        open( data_file, "a" ) do io
+        written, _ = load_file( string( wav_directory, path ) )
 
-            written, _ = load_file( string( wav_directory, path ) )
+        open( data_file, "a" ) do io
 
             for i in 1:size( written )[4]
 
