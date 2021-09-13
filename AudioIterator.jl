@@ -18,7 +18,10 @@ using FileIO, WAV, Serialization
 
 function load_file( dir )
 
+
+
     curr_file, fs = wavread( dir )
+
     curr_file     = reshape_file( curr_file )
 
     return curr_file, fs
@@ -41,15 +44,21 @@ end
 # and are supposed to be reshape later to (sample_size, 2, channel_size, batches)
 function reshape_file( curr_file )
 
-    curr_file   = replace_runoff(curr_file)
-
-    num_samples = Int(floor(size(curr_file)[1] / (sample_size * batches)))
+    num_samples = Int( floor( size( curr_file )[1] / ( sample_size * batches )))
     newsize     = ( sample_size, 2, batches, num_samples )
 
-    curr_file   = reshape(curr_file, newsize)
-    curr_file   = copy( convert( Array{Float16}, curr_file) )
+    last_sample_index = ( reduce( *, newsize ) - reduce(*, newsize[1:3]) ) // 2
 
-    return curr_file
+    file        = curr_file[ 1 : last_sample_index, : ]
+
+    runoff      = replace_runoff( file[ last_sample_index:end, : ] )
+
+    _curr_file  = cat( file, runoff, dims=1 )
+
+    _curr_file  = reshape( _curr_file, newsize )
+    # curr_file   = copy( convert( Array{Float16}, curr_file) )
+
+    return _curr_file, runoff
 
 end
 
