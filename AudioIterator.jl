@@ -49,7 +49,7 @@ function reshape_file( curr_file )
 
     runoff      = replace_runoff( curr_file[ last_sample_index:end, : ] )
 
-    _curr_file  = cat( file, runoff, dims=1 )
+    _curr_file  = cat( curr_file, runoff, dims=1 )
 
     _curr_file  = reshape( _curr_file, newsize )
     # curr_file   = copy( convert( Array{Float16}, curr_file) )
