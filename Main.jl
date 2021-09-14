@@ -3,7 +3,7 @@ include("Globals.jl")
 
 using .Autoencoder, ArgParse, Serialization
 
-model = deserialize( savename )
+model = create_model()
 
 s = ArgParseSettings()
 
@@ -34,6 +34,10 @@ args = parse_args( s )
 if args["create-model"]
 
     model = create_model()
+
+else
+
+    model = deserialize( savename )
 
 end
 
