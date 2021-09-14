@@ -3,12 +3,12 @@ include("Globals.jl")
 
 using .Autoencoder, ArgParse, Serialization
 
-model = create_model()
-
 if savename in readdir("/")
 
-    model = deserialize(savename)
+    train_model( deserialize(savename) )
+
+else
+
+    train_model(create_model())
 
 end
-
-train_model(model)
