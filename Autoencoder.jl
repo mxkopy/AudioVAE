@@ -190,7 +190,7 @@ function autoencode( num_batches )
 
     file = ( file .* 2.0 ) .- 1.0
 
-    wavwrite(file, string(out_directory, "output.wav"), Fs=AudioIterator.fs)
+    wavwrite(file, "output.wav", Fs=AudioIterator.fs)
 
     close( io )
 
