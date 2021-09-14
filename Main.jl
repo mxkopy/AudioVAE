@@ -21,6 +21,12 @@ s = ArgParseSettings()
 
         action = :store_true
 
+
+    "--write-songs"
+
+        action = :store_true
+
+
 end
 
 args = parse_args( s )
@@ -28,6 +34,12 @@ args = parse_args( s )
 if args["create-model"]
 
     model = create_model()
+
+end
+
+if args["write-songs"]
+
+    write_songs()
 
 end
 
