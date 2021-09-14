@@ -186,7 +186,7 @@ function autoencode( num_batches )
 
     end
     
-    file = reshape(out, ( sample_size * num_batches, 2 ) )
+    file = reshape(out, ( sample_size * num_batches * batches, 2 ) )
 
     file = ( file .* 2.0 ) .- 1.0
 
