@@ -58,25 +58,25 @@ function reshape_file( curr_file )
 
 end
 
-function write_songs()
+# function write_songs()
 
-    for path in readdir( wav_directory )
+#     for path in readdir( wav_directory )
 
-        written, _ = load_file( string( wav_directory, path ) )
+#         written, _ = load_file( string( wav_directory, path ) )
 
-        open( data_file, "a" ) do io
+#         open( data_file, "w" ) do io
 
-            for i in 1:size( written )[4]
+#             for i in 1:size( written )[4]
 
-                serialize( io, reshape( written[:, :, :, i], ( sample_size, 1, 2, batches ) ) )
+#                 serialize( io, reshape( written[:, :, :, i], ( sample_size, 1, 2, batches ) ) )
 
-            end
+#             end
 
-        end
+#         end
 
-    end
+#     end
 
-end
+# end
 
 
 # Returns an array of Float16 of size (sample_size, channels, 1, batch_size)
@@ -94,6 +94,44 @@ function next( io )
         return false
 
     end
+
+end
+
+function write_songs()
+
+    paths = readdir( wav_directory )
+
+    s = batches * sample_size
+
+    data, _, _, _ = wavread( string(wav_directory, paths[1]), subrange=1:s )
+
+    io = open( "data.mp", "w" )
+
+    for path in paths
+
+        i = 1
+
+        while true
+
+            try 
+
+                data, _, _, _ = wavread( string(wav_directory, path); subrange=s*i + 1:s * (i+1) )
+
+                i = i + 1
+
+                serialize( io, reshape( data, (sample_size, 1, 2, batches) ) )
+
+            catch y
+
+                break
+
+            end
+
+        end
+
+    end
+
+    close(io)
 
 end
 
