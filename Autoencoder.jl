@@ -170,7 +170,7 @@ function autoencode( num_batches )
 
     encoder, decoder, reconstruct, mean, std = deserialize( savename )
 
-    out = zeros( sample_size, 1, 2, num_batches )
+    out = zeros( sample_size, 1, 2, batches, num_batches )
 
     io  = open( data_file )
 
@@ -182,7 +182,7 @@ function autoencode( num_batches )
 
         _, _, output = eval_model( encoder, decoder, reconstruct, mean, std, unit_gaussians, data )
 
-        out[:, :, :, i] = reshape( output, size(output)[ 1:3 ] )
+        out[:, :, :, :, i] = reshape( output, size(output)[ 1:4 ] )
 
     end
     
