@@ -1,3 +1,11 @@
+function linear_interpolate( A, B, param )
+
+    return A .+ ( ( B .- A ) .* param )
+
+end
+
+
+
 # We have continuous, compressed representations of music data. 
 # In theory, this allows us to interpolate two songs 
 # on a purely sonic level 
