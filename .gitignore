@@ -1,5 +1,6 @@
 data/
 *.bson
+*.wav
 *.mp
 *.cc
 .vscode/

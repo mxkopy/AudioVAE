@@ -98,17 +98,110 @@ function create_sine_targets()
 
     sines = zeros(sample_size, 1, 2, batches)
 
-    for b in 1:batches
+    for b in 1:batches, c in 1:2
 
-        for c in 1:2
-
-            sines[:, :, c, b] = sins
-
-        end
+        sines[:, :, c, b] = sins
 
     end
 
     return sines
+
+end
+
+
+
+function gradient_action( parameters, loss_function_args )
+
+    gs = gradient( parameters ) do
+
+        r_loss, d_loss = loss_function( loss_function_args... )
+
+        println('\n', 'r', string(r_loss)[1:5], 'd', string(d_loss) )
+
+        return 2 * r_loss + d_loss
+
+    end
+
+    return gs
+
+end
+
+
+
+function train_iter( io, model, opt, parameters )
+
+    data = deserialize( io )
+
+    unit_gaussians = rand( Normal( 1.0, 0.1 ), latent_vec_size )
+
+    gs = gradient_action( parameters, (model..., unit_gaussians, data ) )
+
+    Flux.Optimise.update!( opt, parameters, gs )
+
+end
+
+# Saving
+
+function save( count, model, parameters, opt )
+
+    serialize( savename, ( count, model, parameters, opt ) )
+
+end
+
+
+function load()
+
+    count, model, parameters, opt = deserialize( savename )
+
+    io = open( data_file )
+
+    deserialize( io )
+
+    offset = position( io )
+
+    skip( io, count * offset )
+
+    return io, count, model, parameters, opt
+
+end
+
+
+
+function init_model()
+
+    count          = 0
+
+    model = create_model()
+
+    opt = ADAM( 0.01 )
+    parameters = Flux.params( model[1:2]..., model[3:5] )
+
+    serialize( savename, ( count, model, parameters, opt ) )
+
+end
+
+
+
+function train_iterations( num )
+
+    io, count, model, parameters, opt = load()
+
+    for _ in 1:num
+
+        if eof( io )
+
+            count = 0
+            skip( io, 0 )
+
+        end
+
+        count = count + 1
+
+        train_iter( io, model, opt, parameters )
+
+    end
+
+    save( count, model, parameters, opt )
 
 end
 
@@ -143,7 +236,7 @@ function train_model( model )
 
         end
 
-        Flux.Optimise.update!(opt, parameters, gs)
+        Flux.Optimise.update!( opt, parameters, gs )
 
         data = next( io )
 
@@ -196,6 +289,8 @@ function autoencode( num_batches )
 
 end
 
-export parameters, create_model, train_model, load_model, encoder, decoder, eval_model, autoencode
+# export parameters, create_model, train_model, load_model, encoder, decoder, eval_model, autoencode, init
+
+export init_model, train_iterations
 
 end

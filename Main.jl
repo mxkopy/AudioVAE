@@ -21,11 +21,9 @@ s = ArgParseSettings()
 
         action = :store_true
 
-
     "--write-songs"
 
         action = :store_true
-
 
 end
 
@@ -33,11 +31,7 @@ args = parse_args( s )
 
 if args["create-model"]
 
-    model = create_model()
-
-else
-
-    model = deserialize( savename )
+    init_model()
 
 end
 
@@ -51,7 +45,9 @@ if args["train-model"]
 
     train_model( model )
 
-elseif args["autoencode"]
+end
+
+if args["autoencode"]
 
     autoencode( 20 )
 
