@@ -144,7 +144,7 @@ function train_iter( io, model, opt, parameters )
 
     end
 
-    println('\n', 'r', string(r_loss)[1:5], 'd', string(d_loss) )
+    println('\n', "r ", string(r_loss)[1:7], " | d ", string(d_loss)[1:7] )
 
     Flux.Optimise.update!( opt, parameters, gs )
 
