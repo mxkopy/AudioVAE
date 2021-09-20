@@ -138,7 +138,7 @@ function train_iter( io, model, opt, parameters )
 
         r_loss, d_loss = loss_function( model..., unit_gaussians, data )
 
-        println('\n', 'r', string(r_loss)[1:5], 'd', string(d_loss) )
+        @nograd println('\n', 'r', string(r_loss)[1:5], 'd', string(d_loss) )
 
         return 2 * r_loss + d_loss
 
