@@ -134,15 +134,17 @@ function train_iter( io, model, opt, parameters )
 
     unit_gaussians = rand( Normal( 1.0, 0.1 ), latent_vec_size )
 
+    r_loss, d_loss = 0, 0
+
     gs = gradient( parameters ) do
 
         r_loss, d_loss = loss_function( model..., unit_gaussians, data )
 
-        @nograd println('\n', 'r', string(r_loss)[1:5], 'd', string(d_loss) )
-
         return 2 * r_loss + d_loss
 
     end
+
+    println('\n', 'r', string(r_loss)[1:5], 'd', string(d_loss) )
 
     Flux.Optimise.update!( opt, parameters, gs )
 
