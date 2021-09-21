@@ -210,6 +210,6 @@ end
 
 # export parameters, create_model, train_model, load_model, encoder, decoder, eval_model, autoencode, init
 
-export init_model, train_iterations
+export init_model, train_iterations, autoencode
 
 end
