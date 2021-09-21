@@ -104,7 +104,7 @@ function train_iter( io, model, opt, parameters )
 
     end
 
-    println('\n', "r ", string(r_loss)[1:7], " | d ", string(d_loss)[1:7] )
+    # println('\n', "r ", string(r_loss)[1:7], " | d ", string(d_loss)[1:7] )
 
     Flux.Optimise.update!( opt, parameters, gs )
 
@@ -129,7 +129,7 @@ function load()
 
     offset = position( io )
 
-    skip( io, count * offset )
+    seek( io, count * offset )
 
     return io, count, model, parameters, opt
 
@@ -176,62 +176,11 @@ function train_iterations( num )
 end
 
 
-function train_model( model )
-
-    io = open( data_file )
-
-    data           = next( io )
-
-    r_loss, d_loss = Inf, Inf
-    prev_r, prev_d = Inf, Inf
-
-    count          = 0
-
-    encoder, decoder, reconstruct, mean, std = model
-
-    opt = ADAM( 0.01 )
-    parameters = Flux.params( encoder, decoder, mean, std )
-
-    while !eof( io )
-
-        unit_gaussians = rand( Normal( 1.0, 0.1 ), latent_vec_size )
-
-        print("\n", "r ", r_loss, " d ", d_loss)
-                                                                            
-        gs = gradient( parameters ) do
-
-            r_loss, d_loss = loss_function( encoder, decoder, reconstruct, mean, std, unit_gaussians, data )
-
-            return 2 * r_loss + d_loss
-
-        end
-
-        Flux.Optimise.update!( opt, parameters, gs )
-
-        data = next( io )
-
-        if count % 10 == 0
-
-            serialize(savename, ( encoder, decoder, reconstruct, mean, std ))
-            prev_r, prev_d = r_loss, d_loss
-
-            count = 0
-
-        end
-
-        count = count + 1
-
-    end
-
-    close( io )
-        
-    return encoder, decoder, reconstruct, mean, std
-
-end
-
 function autoencode( num_batches )
 
-    encoder, decoder, reconstruct, mean, std = deserialize( savename )
+    _, model, _, _ = deserialize( savename )
+
+    encoder, decoder, reconstruct, mean, std = model
 
     out = zeros( sample_size, 1, 2, batches, num_batches )
 
