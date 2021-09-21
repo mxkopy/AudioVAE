@@ -3,17 +3,11 @@ include("Globals.jl")
 
 using .Autoencoder, ArgParse, Serialization
 
-model = create_model()
-
 s = ArgParseSettings()
 
 @add_arg_table s begin
     
     "--create-model"
-
-        action = :store_true
-
-    "--train-model"
 
         action = :store_true
 
@@ -38,12 +32,6 @@ end
 if args["write-songs"]
 
     write_songs()
-
-end
-
-if args["train-model"]
-
-    train_model( model )
 
 end
 
