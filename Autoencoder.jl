@@ -87,46 +87,6 @@ function loss_function( encoder, decoder, reconstruct, mean, std, param, x )
 
 end
 
-# Experimental sine reconstruction data 
-function create_sine_targets()
-
-    off, freq = abs(rand(1)[1]), abs(rand(1)[1])
-
-    # print(off, ' ', freq)
-
-    sins  = ( sin.( ( ( Array(1:sample_size) .* freq) ) .+ off ) .+ 1.0 ) ./ 2.0
-
-    sines = zeros(sample_size, 1, 2, batches)
-
-    for b in 1:batches, c in 1:2
-
-        sines[:, :, c, b] = sins
-
-    end
-
-    return sines
-
-end
-
-
-
-function gradient_action( parameters, loss_function_args )
-
-    gs = gradient( parameters ) do
-
-        r_loss, d_loss = loss_function( loss_function_args... )
-
-        println('\n', 'r', string(r_loss)[1:5], 'd', string(d_loss) )
-
-        return 2 * r_loss + d_loss
-
-    end
-
-    return gs
-
-end
-
-
 
 function train_iter( io, model, opt, parameters )
 
@@ -201,7 +161,7 @@ function train_iterations( num )
         if eof( io )
 
             count = 0
-            skip( io, 0 )
+            seek( io, 0 )
 
         end
 
