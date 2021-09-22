@@ -111,7 +111,9 @@ function write_songs()
 
         i = 1
 
-        while true
+        eof = true
+
+        while eof
 
             try 
 
@@ -126,6 +128,8 @@ function write_songs()
                 serialize( io, reshape( data, (sample_size, 1, 2, batches) ) )
 
             catch y
+
+                eof = false
 
                 break
 
