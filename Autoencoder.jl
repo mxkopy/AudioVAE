@@ -49,7 +49,7 @@ function create_model()
 
     reconstruct = Upsample( size=( output_shape, 1) )
 
-    encoder, decoder, reconstruct, mean, std = fmap(f32, encoder), fmap(f32, decoder), fmap(f32, reconstruct), fmap(f32, mean), fmap(f32, std)
+    # encoder, decoder, reconstruct, mean, std = fmap(f32, encoder), fmap(f32, decoder), fmap(f32, reconstruct), fmap(f32, mean), fmap(f32, std)
 
     return encoder, decoder, reconstruct, mean, std
 
@@ -211,6 +211,8 @@ function autoencode( num_batches )
     close( io )
 
 end
+
+# a, b, c, d, e = create_model()
 
 # export parameters, create_model, train_model, load_model, encoder, decoder, eval_model, autoencode, init
 
