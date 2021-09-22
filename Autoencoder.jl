@@ -58,8 +58,6 @@ end
 
 function eval_model( encoder, decoder, reconstruct, mean, std, param, data)
 
-    print(typeof(data))
-
     # Encoding process
     enc_out    = encoder( data )
 
