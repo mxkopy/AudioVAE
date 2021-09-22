@@ -69,7 +69,7 @@ function next( io )
 
         out = ( 1.0 .+ out ) ./ 2.0
 
-        return Float64.( out )
+        return Float32.( out )
 
     else
 
@@ -104,8 +104,6 @@ function write_songs()
                 data, _, _, _ = wavread( string(wav_directory, path); subrange=s*i + 1:s * (i+1) )
 
                 data = ( data .+ 1.0 ) ./ 2.0
-
-                data = Float32.( data )
 
                 i = i + 1
 
