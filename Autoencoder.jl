@@ -49,11 +49,11 @@ function create_model()
 
     reconstruct = Upsample( size=( output_shape, 1) )
 
-    encoder = mapleaves( Float32, encoder )
-    decoder = mapleaves( Float32, decoder )
-    reconstruct = mapleaves( Float32, reconstruct )
-    mean = mapleaves(Float32, mean)
-    std = mapleaves(Float32, std)
+    encoder = Flux.mapleaves( Float32, encoder )
+    decoder = Flux.mapleaves( Float32, decoder )
+    reconstruct = Flux.mapleaves( Float32, reconstruct )
+    mean = Flux.mapleaves(Float32, mean)
+    std = Flux.mapleaves(Float32, std)
 
     return encoder, decoder, reconstruct, mean, std
 
