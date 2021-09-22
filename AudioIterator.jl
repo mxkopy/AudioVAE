@@ -69,7 +69,7 @@ function next( io )
 
         out = ( 1.0 .+ out ) ./ 2.0
 
-        return Float32.( out )
+        return Float64.( out )
 
     else
 
