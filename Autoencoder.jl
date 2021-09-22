@@ -9,29 +9,6 @@ include("AudioIterator.jl")
 using .AudioIterator, Flux, Serialization, WAV, Zygote
 using  Distributions
 
-
-function dropout( input; thresh=0.5 )
-
-    output = flatten(input)
-
-    for i in 1:length(output)
-
-        if rand() < thresh
-
-            output[i] = 0.0
-
-        else
-            
-            output[i] = output[i] / thresh
-
-        end
-
-    end
-
-    return reshape(output, size(input))
-
-end
-
 # Model definition
 
 # Note that the left and right channels are defined as the second dimension of the input array, i.e. the input is shaped
@@ -51,8 +28,7 @@ function create_model()
         Conv( (3, 1), (8 => 16), pad=2, stride=2),
 
         AdaptiveMeanPool( ( output_shape , 1 ) ),
-        dropout
-
+        Dropout(0.5) 
     )
     
     decoder = Chain(
@@ -72,7 +48,7 @@ function create_model()
 
     reconstruct = Upsample( size=( output_shape, 1) )
 
-    encoder, decoder, reconstruct, mean, std = fmap(f32, encoder), fmap(f32, decoder), fmap(f32, reconstruct), fmap(f32, mean), fmap(f32, std)
+    # encoder, decoder, reconstruct, mean, std = fmap(f32, encoder), fmap(f32, decoder), fmap(f32, reconstruct), fmap(f32, mean), fmap(f32, std)
 
     return encoder, decoder, reconstruct, mean, std
 
@@ -81,6 +57,8 @@ end
 # Evaluates the model. Not attached to gradient.
 
 function eval_model( encoder, decoder, reconstruct, mean, std, param, data)
+
+    print(typeof(data))
 
     # Encoding process
     enc_out    = encoder( data )
@@ -237,7 +215,7 @@ end
 
 # a, b, c, d, e = create_model()
 
-print(typeof.(create_model()))
+# print(typeof.(create_model()))
 
 # export parameters, create_model, train_model, load_model, encoder, decoder, eval_model, autoencode, init
 
