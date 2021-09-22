@@ -28,7 +28,7 @@ function create_model()
         Conv( (3, 1), (8 => 16), pad=2, stride=2),
 
         AdaptiveMeanPool( ( output_shape , 1 ) ),
-        Dropout(0.5),
+        fmap(f32, Dropout(0.5)),
 
     )
     
@@ -49,7 +49,7 @@ function create_model()
 
     reconstruct = Upsample( size=( output_shape, 1) )
 
-    # encoder, decoder, reconstruct, mean, std = fmap(f32, encoder), fmap(f32, decoder), fmap(f32, reconstruct), fmap(f32, mean), fmap(f32, std)
+    encoder, decoder, reconstruct, mean, std = fmap(f32, encoder), fmap(f32, decoder), fmap(f32, reconstruct), fmap(f32, mean), fmap(f32, std)
 
     return encoder, decoder, reconstruct, mean, std
 
@@ -213,6 +213,8 @@ function autoencode( num_batches )
 end
 
 # a, b, c, d, e = create_model()
+
+print(typeof.(create_model()))
 
 # export parameters, create_model, train_model, load_model, encoder, decoder, eval_model, autoencode, init
 
