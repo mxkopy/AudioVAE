@@ -49,6 +49,12 @@ function create_model()
 
     reconstruct = Upsample( size=( output_shape, 1) )
 
+    encoder = mapleaves( Float32, encoder )
+    decoder = mapleaves( Float32, decoder )
+    reconstruct = mapleaves( Float32, reconstruct )
+    mean = mapleaves(Float32, mean)
+    std = mapleaves(Float32, std)
+
     return encoder, decoder, reconstruct, mean, std
 
 end    
@@ -156,7 +162,7 @@ function train_iterations( num )
 
     io, count, model, parameters, opt = load()
 
-    for _ in 1:num
+    for i in 1:num
 
         if eof( io )
 
@@ -168,6 +174,8 @@ function train_iterations( num )
         count = count + 1
 
         train_iter( io, model, opt, parameters )
+
+        println( i / num )
 
     end
 
@@ -198,11 +206,11 @@ function autoencode( num_batches )
 
     end
     
-    file = reshape(out, ( sample_size * num_batches * batches, 2 ) )
+    file = reshape( out, ( sample_size * num_batches * batches, 2 ) )
 
     file = ( file .* 2.0 ) .- 1.0
 
-    wavwrite(file, "output.wav", Fs=22050)
+    wavwrite( file, "output.wav", Fs=22050)
 
     close( io )
 

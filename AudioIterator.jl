@@ -117,6 +117,10 @@ function write_songs()
 
                 data, _, _, _ = wavread( string(wav_directory, path); subrange=s*i + 1:s * (i+1) )
 
+                data = ( data .+ 1.0 ) ./ 2.0
+
+                data = Float32.( data )
+
                 i = i + 1
 
                 serialize( io, reshape( data, (sample_size, 1, 2, batches) ) )
