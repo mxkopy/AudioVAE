@@ -143,6 +143,6 @@ function write_songs()
 
 end
 
-export next, next_batch, endflag, dir_iterator, samp_iterator, current_dir, init, reshape_file, load_file, fs
+export next, write_songs
 
 end
