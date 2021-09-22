@@ -58,28 +58,8 @@ function reshape_file( curr_file )
 
 end
 
-# function write_songs()
 
-#     for path in readdir( wav_directory )
-
-#         written, _ = load_file( string( wav_directory, path ) )
-
-#         open( data_file, "w" ) do io
-
-#             for i in 1:size( written )[4]
-
-#                 serialize( io, reshape( written[:, :, :, i], ( sample_size, 1, 2, batches ) ) )
-
-#             end
-
-#         end
-
-#     end
-
-# end
-
-
-# Returns an array of Float16 of size (sample_size, channels, 1, batch_size)
+# Returns an array of Float32 of size (sample_size, channels, 1, batch_size)
 
 function next( io )
 
@@ -87,7 +67,9 @@ function next( io )
 
         out = deserialize( io )
 
-        return ( 1.0 .+ out ) ./ 2.0
+        out = ( 1.0 .+ out ) ./ 2.0
+
+        return Float32.( out )
 
     else
 
@@ -108,6 +90,8 @@ function write_songs()
     io = open( "data.mp", "w" )
 
     for path in paths
+
+        println( path )
 
         i = 1
 
