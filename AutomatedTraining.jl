@@ -5,13 +5,13 @@ include("AudioIterator.jl")
 
 using .Autoencoder, .AudioIterator, ArgParse, Serialization
 
-if ! (data_file in readdir("/"))
+if ! (data_file in readdir("./"))
 
     write_songs()
 
 end
 
-if ! (savename in readdir("/"))
+if ! (savename in readdir("./"))
 
     init_model()
 

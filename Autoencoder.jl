@@ -49,6 +49,8 @@ function create_model()
 
     reconstruct = Upsample( size=( output_shape, 1) )
 
+    encoder, decoder, mean, std = fmap(Float32, encoder), fmap(Float32, decoder), fmap(Float32, mean), fmap(Float32, std)
+
     return encoder, decoder, reconstruct, mean, std
 
 end    
