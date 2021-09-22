@@ -1,7 +1,9 @@
-include("Autoencoder.jl")
 include("Globals.jl")
+include("Autoencoder.jl")
+include("AudioIterator.jl")
 
-using .Autoencoder, ArgParse, Serialization
+
+using .Autoencoder, .AudioIterator, ArgParse, Serialization
 
 if ! (data_file in readdir("/"))
 
@@ -15,4 +17,4 @@ if ! (savename in readdir("/"))
 
 end
 
-train_iterations( 1000 )
+train_iterations( 10 )
