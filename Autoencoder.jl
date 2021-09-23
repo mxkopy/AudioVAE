@@ -11,12 +11,6 @@ using  Distributions
 
 # Model definition
 
-# Note that the left and right channels are defined as the second dimension of the input array, i.e. the input is shaped
-# (sample_size, channels, 1, batch_size) 
-# while the encoder output has the channels as the third dimensions, i.e. the encoder output is
-# (output_shape, 1, out_channels, batch_size)
-# This is intentional, because usually the left and right channels are a little bit redundant
-
 function create_model()
 
     encoder = Chain(
@@ -104,6 +98,8 @@ function train_iter( io, model, opt, parameters )
         return 2 * r_loss + d_loss
 
     end
+
+    sleep( 10.0 )
 
     println('\n', "r ", string(r_loss)[1:7], " | d ", string(d_loss)[1:7] )
 
@@ -212,12 +208,6 @@ function autoencode( num_batches )
     close( io )
 
 end
-
-# a, b, c, d, e = create_model()
-
-# print(typeof.(create_model()))
-
-# export parameters, create_model, train_model, load_model, encoder, decoder, eval_model, autoencode, init
 
 export init_model, train_iterations, autoencode
 
