@@ -105,7 +105,7 @@ function train_iter( io, model, opt, parameters )
 
     end
 
-    # println('\n', "r ", string(r_loss)[1:7], " | d ", string(d_loss)[1:7] )
+    println('\n', "r ", string(r_loss)[1:7], " | d ", string(d_loss)[1:7] )
 
     Flux.Optimise.update!( opt, parameters, gs )
 
@@ -157,8 +157,6 @@ function train_iterations( num )
 
     io, count, model, parameters, opt = load()
 
-    opt = ADAM( 0.01 )
-
     for i in 1:num
 
         if eof( io )
@@ -166,13 +164,15 @@ function train_iterations( num )
             count = 0
             seek( io, 0 )
 
+            opt = ADAM( 0.01 )
+
         end
 
         count = count + 1
 
         train_iter( io, model, opt, parameters )
 
-        println( i / num )
+        print( string(i / num)[1:4], " " )
 
     end
 
