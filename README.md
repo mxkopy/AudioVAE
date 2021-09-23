@@ -11,3 +11,6 @@ train_iterations( 35000 )                   # evaluates model on data and does b
 
 
 CUDA is disabled by default, and the implementation is serial (i.e. not parallel). 
+
+Globals.jl defines various parameters that may affect performance (e.g. sample size, number of batches, latent-space size). 
+
