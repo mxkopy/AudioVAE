@@ -157,6 +157,8 @@ function train_iterations( num )
 
     io, count, model, parameters, opt = load()
 
+    opt = ADAM( 0.01 )
+
     for i in 1:num
 
         if eof( io )
