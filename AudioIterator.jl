@@ -3,18 +3,6 @@ module AudioIterator
 include("Globals.jl")
 
 using FileIO, WAV, Serialization
-# import LibSndFile
-
-# Essentially pads the buffer audio array with zeros, so each step in the iteration is guaranteed. 
-# I.e you can iterate for i in range: data = buffer[sample_size * batches * i : sample_size * batches * (i + 1)]
-
-# endflag       = false
-# current_dir   = 1
-# samp_iterator = 1
-
-# dir_iterator  = readdir(wav_directory);
-
-# curr_file     = zeros(1, 1, 1, 1)
 
 function load_file( dir )
 
@@ -58,8 +46,10 @@ function reshape_file( curr_file )
 
 end
 
+# Everything above is deprecated. 
 
-# Returns an array of Float32 of size (sample_size, channels, 1, batch_size)
+
+# Returns an array of Float32 of size (sample_size, 1, channels, batch_size)
 
 function next( io )
 
@@ -79,6 +69,14 @@ function next( io )
 
 end
 
+
+# This function serializes all of the .wav files to a pre-batched, pre-parsed "data.mp" file. 
+# It should be run any time there is a change in the dataset. 
+# It's run only if the "$data_file" file is not present. 
+
+# The file is typically incredibly large and the serialization process is typically very expensive. 
+# However, this allows us to skip parsing and reading directly from wav during the training process. 
+
 function write_songs()
 
     paths = readdir( wav_directory )
@@ -87,7 +85,7 @@ function write_songs()
 
     data, _, _, _ = wavread( string(wav_directory, paths[1]), subrange=1:s )
 
-    io = open( "data.mp", "w" )
+    io = open( data_file, "w" )
 
     for path in paths
 

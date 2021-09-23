@@ -9,7 +9,15 @@ include("AudioIterator.jl")
 using .AudioIterator, Flux, Serialization, WAV, Zygote
 using  Distributions
 
-# Model definition
+# Model definition.
+
+# A model is a series of nested functions that takes a multidimensional array as input, 
+    # and keeps other multidimensional arrays as parameters (ex: kernels for the convolution function)
+
+# These functions are implemented by the Flux package. 
+
+# Most of everything is agnostic to this definition; as long as there are 5 components the rest of the program doesn't care what they are. 
+# It would be simple to down/upsize. 
 
 function create_model()
 
@@ -42,13 +50,18 @@ function create_model()
 
     reconstruct = Upsample( size=( output_shape, 1) )
 
-    # encoder, decoder, reconstruct, mean, std = fmap(f32, encoder), fmap(f32, decoder), fmap(f32, reconstruct), fmap(f32, mean), fmap(f32, std)
-
     return encoder, decoder, reconstruct, mean, std
 
 end    
 
-# Evaluates the model. Not attached to gradient.
+# Evaluates the output of the model given some input. 
+
+# I tried to disentangle this as much as possible so that modifying this function 
+    # modifies the actual mathematical actions undertaken by the model
+
+    # i.e. this is separate from data parsing and backprop
+
+    # That being said, this is probably the most resource intensive function. 
 
 function eval_model( encoder, decoder, reconstruct, mean, std, param, data)
 
@@ -66,13 +79,11 @@ function eval_model( encoder, decoder, reconstruct, mean, std, param, data)
     rec_out    = reconstruct( latent )
     dec_out    = decoder( rec_out )
 
-    # dec_out    = ( dec_out .* 2.0 ) .- 1.0
-
     return enc_out, latent, dec_out
 
 end
 
-# The loss function and model evaluation that should be called within the gradient scope
+# The loss function and model evaluation that should be called within the backprop/gradient scope
 
 function loss_function( encoder, decoder, reconstruct, mean, std, param, x )
 
@@ -82,14 +93,31 @@ function loss_function( encoder, decoder, reconstruct, mean, std, param, x )
 
 end
 
+# Runs a single training iteration with backprop. This function is executed the most. 
 
-function train_iter( io, model, opt, parameters )
+# I tried to disentangle this function from other aspects of the program, similarly to eval_model
 
-    data = deserialize( io )
+    # However, it is more involved. Unlike eval_model, this function
+
+        # Generates an array of random integers
+
+        # Tracks model gradients
+
+        # Prints to console 
+
+        # Runs Flux's backprop
+
+    # Actually evaluating the model and the backprop are most likely the most intensive parts 
+
+function train_iter( data, model, opt, parameters )
+
+    # Generates an array of random integers
 
     unit_gaussians = rand( Normal( 1.0, 0.1 ), latent_vec_size )
 
     r_loss, d_loss = 0, 0
+
+    # Tracks model gradients
 
     gs = gradient( parameters ) do
 
@@ -101,13 +129,29 @@ function train_iter( io, model, opt, parameters )
 
     sleep( 10.0 )
 
+    # Prints to console 
+
     println('\n', "r ", string(r_loss)[1:7], " | d ", string(d_loss)[1:7] )
+
+    # Runs Flux's backprop
 
     Flux.Optimise.update!( opt, parameters, gs )
 
 end
 
-# Saving
+
+
+# Checkpointing is achieved by 
+
+    # serializing the model, its parameters, and the optimizer at its current state 
+
+    # saving the number of iterations done on the current dataset
+
+# The following functions implement this. 
+
+
+
+# Saving is fairly cheap, since it's done infrequently. 
 
 function save( count, model, parameters, opt )
 
@@ -115,6 +159,10 @@ function save( count, model, parameters, opt )
 
 end
 
+# This function deserializes the model and relevant parameters from the disk, 
+    # and sets the data IOPipe to the checkpointed position. 
+
+# Loading is fairly cheap, since it's done infrequently.
 
 function load()
 
@@ -132,7 +180,8 @@ function load()
 
 end
 
-
+# If we initialize the model to disk, we don't have to test for the initial case in train_iterations; 
+    # i.e. we can blindly load() every call of train_iterations()
 
 function init_model()
 
@@ -147,7 +196,22 @@ function init_model()
 
 end
 
+# This is the main driver for training. It is the most involved and encapsulating function, 
+    # though it is separate from data parsing. 
 
+# This function:
+
+    # loads the last checkpoint
+
+    # iterates 1 -> n, doing the following:
+
+        # Checks if the loaded IOPipe is at its last position 
+
+        # Deserializes data from the IOPipe
+
+        # Does one iteration of training 
+
+    # on completion, saves the model 
 
 function train_iterations( num )
 
@@ -164,9 +228,11 @@ function train_iterations( num )
 
         end
 
+        data = deserialize( io )
+
         count = count + 1
 
-        train_iter( io, model, opt, parameters )
+        train_iter( data, model, opt, parameters )
 
         print( string(i / num)[1:4], " " )
 
@@ -176,6 +242,7 @@ function train_iterations( num )
 
 end
 
+# This is the main driver for doing inference. It runs on command, i.e. almost never. 
 
 function autoencode( num_batches )
 
